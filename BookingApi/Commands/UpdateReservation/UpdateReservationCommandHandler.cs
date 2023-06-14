@@ -17,16 +17,7 @@ namespace BookingApi.Commands.UpdateReservation
         }
         public async Task<bool> Handle(UpdateReservationCommand request,CancellationToken cancellationToken)
         {
-            var validator = new UpdateReservationCommandValidator();
-            ValidationResult results = validator.Validate(request);
-            bool validationSucceeded = results.IsValid;
-            if (!validationSucceeded)
-            {
-                var failures = results.Errors.ToList();
-                var message = new StringBuilder();
-                failures.ForEach(f => { message.Append(f.ErrorMessage + Environment.NewLine); });
-                throw new ValidationException(message.ToString());
-            }
+            
             var reservation = _context.Reservations.Find(request.Id);
             if (reservation == null) 
             {

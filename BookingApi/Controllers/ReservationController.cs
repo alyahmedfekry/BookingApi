@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using BookingApi.Commands.AddNewReservation;
 using BookingApi.Commands.UpdateReservation;
 using BookingApi.Commands.DeleteReservation;
+using System.Text;
+using FluentValidation.Results;
 
 namespace BookingApi.Controllers
 {
@@ -38,16 +40,39 @@ namespace BookingApi.Controllers
         }
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Post([FromBody] AddNewReservationCommand command)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Post(AddNewReservationCommand command)
         {
+            var validator = new AddNewReservationCommandValidator();
+            ValidationResult results = validator.Validate(command);
+            bool validationSucceeded = results.IsValid;
+            if (!validationSucceeded)
+            {
+                var failures = results.Errors.ToList();
+                var message = new StringBuilder();
+                failures.ForEach(f => { message.Append(f.ErrorMessage + Environment.NewLine); });
+                return BadRequest(message.ToString());
+            }
             await _mediator.Send(command);
             return Ok();
         }
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult>Update([FromBody] UpdateReservationCommand command)
         {
+            var validator = new UpdateReservationCommandValidator();
+            ValidationResult results = validator.Validate(command);
+            bool validationSucceeded = results.IsValid;
+            if (!validationSucceeded)
+            {
+                var failures = results.Errors.ToList();
+                var message = new StringBuilder();
+                failures.ForEach(f => { message.Append(f.ErrorMessage + Environment.NewLine); });
+                return BadRequest(message.ToString());
+
+            }
             var result=await _mediator.Send(command);
             if (result)
             {

@@ -7,32 +7,22 @@ namespace BookingApi.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        //private readonly UserOptions _options;
+        private readonly UserOptions _useroptions;
         public ApplicationDbContext()
         {
         }
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IOptions<UserOptions>useroptions)
             : base(options)
         {
+            _useroptions = useroptions.Value;
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Trip> Trips { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = 1,
-                    Email = "aly@example.com",
-                    Password = "password",
-                },
-                new User
-                {
-                    Id = 2,
-                    Email = "aya@example.com",
-                    Password = "password",
-                }
+            modelBuilder.Entity<User>().HasData(_useroptions.Accounts
+
                 ) ;
             modelBuilder.Entity<Trip>().HasData(
                 new Trip

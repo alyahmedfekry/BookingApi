@@ -4,6 +4,6 @@ namespace BookingApi.Options
     public class UserOptions
     {
         public const string Users = "Users";
-        public IList<User> UserList { get; set; }
+        public IList<User> Accounts { get; set; }
     }
 }

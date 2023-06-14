@@ -16,16 +16,7 @@ namespace BookingApi.Commands.AddNewReservation
         }
         public async Task Handle(AddNewReservationCommand request,CancellationToken cancellationToken)
         {
-            var validator = new AddNewReservationCommandValidator();
-            ValidationResult results = validator.Validate(request);
-            bool validationSucceeded = results.IsValid;
-            if (!validationSucceeded)
-            {
-                var failures = results.Errors.ToList();
-                var message = new StringBuilder();
-                failures.ForEach(f => { message.Append(f.ErrorMessage + Environment.NewLine); });
-                throw new ValidationException(message.ToString());
-            }
+            
             var reservation = new Reservation
             {
                 CreatedDate = DateTime.Now,
